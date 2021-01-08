@@ -1,0 +1,166 @@
+var guessingPenalty = 0;
+var numCorrectLetters = 0;
+
+
+var word = "";
+var array = [];
+var winWord = [];
+
+function start(){
+    drawHanger();
+    
+    answer();
+    wordPrint();
+    keyDownMethod(guess);
+}
+    
+function drawHanger(){
+    drawHorizantalLine(getWidth()/4,getWidth()*3/4,getHeight()*2/3);
+    drawVerticalLine(getWidth()/2,getHeight()*2/3,getHeight()/6);
+    drawHorizantalLine(getWidth()/2,getWidth()*2/3,getHeight()/6);
+    drawVerticalLine(getWidth()*2/3,getHeight()/6,getHeight()/4);
+}
+    
+// this function draws Vertical Lines. This function has three parameter; 
+// parameter x is for x coordinate of the Vertical line.
+// parameter y1 and y2 are start and end point for the line.
+function drawVerticalLine(x,y1,y2){
+    var line = new Line(x,y1,x,y2);
+    line.setColor(Color.black);
+    add(line);
+}
+
+// this function draws Horizantal Lines. This function has three parameter
+// parameter y is for height of the Horizantal line
+// parameter x1 and x2 are start and end point for the line
+function drawHorizantalLine(x1,x2,y){
+    var line = new Line(x1,y,x2,y);
+    line.setColor(Color.black);
+    add(line);
+}
+
+function drawBodyPieces(x){
+    if(x==1){drawHead();}  
+    if(x==2){drawBody();}
+    if(x==3){drawLeftLeg();}
+    if(x==4){drawRightLeg();}
+    if(x==5){drawLeftArm();}
+    if(x==6){drawRightArm();}
+    if(x==7){drawGameOver();}
+}
+
+function drawHead(){
+    var circle = new Circle(30);
+    circle.setPosition(getWidth()*2/3, 120);
+    add(circle);
+    var circle = new Circle(27);
+    circle.setPosition(getWidth()*2/3, 120);
+    circle.setColor(Color.white);
+    add(circle);
+}
+
+function drawBody(){
+    var line = new Line(getWidth()*2/3,150,getWidth()*2/3,240);
+    line.setLineWidth(4);
+    add(line);
+}
+
+function drawLeftLeg(){
+    var line = new Line((getWidth()*2/3),240,240,260);
+    line.setLineWidth(4);
+    add(line);
+}
+
+function drawRightLeg(){
+    var line = new Line(getWidth()*2/3,240,290,260);
+    line.setLineWidth(4);
+    add(line);
+}
+
+function drawLeftArm(){
+    var line = new Line(getWidth()*2/3,180,240,170);
+    line.setLineWidth(4);
+    add(line);
+}
+
+function drawRightArm(){
+  var line = new Line(getWidth()*2/3,180,290,170);
+    line.setLineWidth(4);
+    add(line);  
+}
+
+function drawGameOver(){
+    var rect = new Rectangle(getWidth(),getHeight());
+    rect.setPosition(0,0);
+    rect.setColor(Color.black);
+    add(rect);
+    
+    var txt = new Text("X","300pt Arial");
+    txt.setPosition(getWidth()/2-txt.getWidth()/2,getHeight()/3+txt.getHeight()/2);
+    txt.setColor(Color.red);
+    add(txt);
+    
+    var txt = new Text("Game Over","50pt Arial");
+    txt.setPosition(getWidth()/2-txt.getWidth()/2,getHeight()*4/5+txt.getHeight()/2);
+    txt.setColor(Color.red);
+    add(txt);
+    
+    return true;
+}
+
+function answer(){
+    var answer = readLine("Choose a word ");
+    word += answer;
+    
+     for(var i = 0; i < word.length; i++){
+        winWord.push("@");
+    }
+
+    
+}
+    function guess(e){   
+    
+    var makeGuess = e.keyCode;
+    var check = true;
+    for(var i = 0; i < word.length; i++){
+        if(Keyboard.letter(word[i])==makeGuess){
+            winWord[i] = word[i];
+            var txt = new Text(word[i], "35pt Arial");
+            txt.setPosition(1+(35*([i])), 5*getHeight()/6);
+            add(txt);
+            check=false;            
+        }
+    }
+    checkForWin();   
+    if(check){
+        guessingPenalty++;
+        drawBodyPieces(guessingPenalty);
+    }    
+
+}
+
+function wordPrint(){
+    for(var i = 0; i < word.length; i++){
+        array.push("_ ");
+        var txt = new Text(array[i], "35pt Arial");
+        txt.setPosition(1+(35*([i])), 5*getHeight()/6);
+        add(txt);
+    }
+}
+
+
+function checkForWin(){
+    for(var i = 0; i < word.length; i++){
+        if(word[i]==winWord[i]){
+            numCorrectLetters++
+            winWord[i]="@";
+        }
+    }
+    
+    if(numCorrectLetters==word.length){       
+        var youWin = new WebImage("http://pixelartmaker.com/art/681e156ae971bd4.png");
+        youWin.setSize(getWidth(), getHeight());
+        youWin.setPosition(getWidth()/2-youWin.getWidth()/2, getHeight()/2-youWin.getHeight()/2);
+        add(youWin)
+    }
+}
